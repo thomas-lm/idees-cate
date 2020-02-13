@@ -1,0 +1,12 @@
+﻿<option value="accueil">Mots d'accueil et présentation du site</option>
+<option value="le_cate">Le caté</option>
+<option value="chants">Chants</option>
+<option value="prieres">Prières</option>
+<option value="images">Images et coloriages</option>
+<option value="bricolages">Bricolages</option>
+<option value="eveil_a_la_foi">Eveil à la foi</option>
+<option value="celebrations">Célébrations</option>
+<option value="eveil_a_la_foi">Mots d'accueil et présentation du site</option>
+<option value="nouveautes">Nouveautés</option>
+<option value="contact">Contactez-nous</option>
+<option value="forum">Forum</option>

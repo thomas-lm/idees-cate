@@ -1,0 +1,4 @@
+AuthUserFile /home/juideecate/admin/.passwd
+AuthName Identification
+AuthType Basic
+require valid-user
