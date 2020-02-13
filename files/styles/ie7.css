@@ -1,0 +1,14 @@
+header nav{
+	padding-top: 5px;
+}
+
+.page #sommaire-nav {
+	margin: 5px 0px;
+	padding-top: 5px;
+}
+
+.page#page-images div.legend {
+	position: relative;
+	display: inline;
+}
+
