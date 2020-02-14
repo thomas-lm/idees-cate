@@ -1,0 +1,202 @@
+/* Couleur du texte */
+
+.page .txt-bleu,
+.page .txt-bleu a{
+	color: #0000FF;
+}
+
+.page .txt-bleuClair,
+.page .txt-bleuClair a{
+	color: #8888FF;
+}
+
+.page .txt-vert,
+.page .txt-vert a{
+	color: #008800;
+}
+
+.page .txt-rouge,
+.page .txt-rouge a{
+	color: red;
+}
+
+.page .txt-rougeFonce,
+.page .txt-rougeFonce a{
+	color: rgb(218, 14, 0);
+}
+
+.page .txt-orange,
+.page .txt-orange a{
+	color: orange;
+}
+
+.page .txt-bleuFonce,
+.page .txt-bleuFonce a{
+	color: darkblue;
+}
+
+.page .txt-sienna,
+.page .txt-sienna a{
+	color: sienna;
+}
+
+/* Couleur des bordures */
+
+.page .bord-rose{
+	border : 4px solid pink;
+}
+
+.page .bord-violet{
+	border : 4px solid purple;
+}
+
+.page .bord-rougeFonce{
+	border : 4px solid rgb(218,14,0);
+}
+
+.page .bord-bleu {
+	border : 4px solid blue;
+}
+
+.page .bord-vert{
+	border : 4px solid #008800;
+}
+
+.page .bord-rouge {
+	border : 4px solid #CC0000;
+}
+
+/* Couleur de fond */
+.page .fond-bleuClair{
+	background-color: #C0C0FF;
+}
+
+/* Style du texte */
+
+.page .gras {
+	font-weight: bold;
+}
+
+.page .souligne{
+	text-decoration: underline;
+}
+
+.page .italique{
+	font-style:italic;
+}
+
+.page .txt-plusGrand{
+	font-size: 1.2em;
+}
+
+.page .txt-plusPetit{
+	font-size: .8em;
+}
+
+/* Images */
+
+.page img.miniature {
+	max-width: 220px;
+	height : 220px;
+	cursor: pointer;
+	border: 1px dashed blue;
+}
+
+.page a img{
+	vertical-align: middle;
+}
+
+.page#page-images img.miniature {
+	width : 100px;
+	height: 100px;
+}
+
+.page#page-images div.legend {
+	text-align: center;
+	font-size: .6em;
+	width: 100px;
+	height: 120px;
+	vertical-align : top;
+	clear: both;
+	display: inline-block;
+}
+
+.page img.icone {
+	width : 100px;
+}
+
+/* Autres */
+
+
+.page .titre2{
+	background-color: #F0F8FF;
+	border : 2px solid #0000FF;
+	padding : .5em;
+	max-width: 400px;
+}
+
+.page .titre3{
+	border : 4px solid #FF0000;
+	color: darkblue;
+	padding : .5em;
+	max-width : 300px;
+}
+
+.page .border-red{
+	border : 2px solid red;
+	padding: 5px;
+}
+.page .decale {
+	margin-left : 25px;
+}
+
+.page .center,
+.page .centre {
+	text-align: center;
+}
+
+.page table.centre{
+	margin: auto;
+	text-align: left;
+}
+
+.page .backtotop {
+	text-align: center;
+}
+
+.page #cse-search-results{
+	width: 800px;
+	margin: auto;
+}
+
+.page h1 {
+	padding : .5em;
+	max-width: 400px;
+}
+
+.page h1{
+	margin-bottom: 40px;
+}
+
+.page .listecentre li{
+	text-align: center;
+	list-style-type: none;	
+}
+
+.page#page-prieres a{
+	color: red;
+}
+
+.page#page-images h2{
+	color: #6495ED;
+}
+
+.page iframe{
+	display : block;
+	margin: auto;
+	max-width : 95%;
+}
+
+.page .g-recaptcha iframe{
+	max-width : 100%;
+}

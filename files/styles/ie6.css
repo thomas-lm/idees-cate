@@ -1,0 +1,15 @@
+header nav li{
+	display: inline-block;
+	white-space: nowrap;
+	width: 60px;
+	height: 32px;
+	text-align: center;
+}
+
+body .sponsor-top .v4-banner-reactive {
+	left: 470px;
+}
+
+header nav #nav-accueil img{
+	padding : 7px 0 6px 0;
+}

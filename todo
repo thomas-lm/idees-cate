@@ -1,0 +1,24 @@
+--> PROD
+
+-> revoir le code HTML 
+	- séance du caté
+	- bricolages
+	- chants
+	- prieres
+	- eveil à la foi
+	- celebrations
+	- Remettre les styles comme il faut dans les pages
+
+-> PROD ++
+- Mettre en place une page de téléchargement avec affichage si provenance != idees-cate.com pour le dossier files/others/
+- chercher erreur 404 via https://www.google.com/webmasters/tools/crawl-errors?hl=fr&siteUrl=http://www.idees-cate.com/
+- créer un sitemap
+- Chants => convertir en texte les images
+- ajouter une description propre à chaque page
+- revoir le forum
+- uniformiser toutes les séances avec des jeux de couleurs limité
+
+- supprimer les anciennes redirection htaccess quand google aura référencer les nouveaux liens
+
+
+Idées : Parcour KT par classe

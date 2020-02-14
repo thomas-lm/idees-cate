@@ -1,0 +1,265 @@
+<?php
+	require_once("classes/bdForum.class.php");
+	require_once("classes/utils.class.php");
+	$utils = new Utils();
+	$bddForum = new BdForum($databaseUser,$databasePwd,$databaseName,$databaseUrl);
+	
+	function clearCache(){
+		if(file_exists("./cache/forum.cache"))
+			unlink("./cache/forum.cache");
+	}
+	
+	function setCache($content){
+		file_put_contents("./cache/forum.cache",$content);
+	}
+	
+	function getCache(){
+		$rtn = "";
+		if (file_exists("./cache/forum.cache")){
+			$rtn = file_get_contents("./cache/forum.cache");
+		}
+		return $rtn;
+	}
+	
+function formulaire($type,$cle) {
+	$form = "";
+	if ($type==1) $form .= '<form id="post" action="'.$GLOBALS['urlBase'].'forum/theme-'.$_GET['idtheme'].'.html" method="POST">';
+	else $form .= '<form id="post" action="'.$GLOBALS['urlBase'].'forum/sujet-'.$_GET['idsujet'].'.html" method="POST">';
+	$form .= '<p>Veuillez compl&eacute;ter ce formulaire pour ';
+	if ($type==1) $form .= 'Cr&eacute;er un nouveau sujet.</p>';
+	else $form .= 'R&eacute;pondre au sujet.</p>';
+	$form .= '
+<div class="formulaire">
+	<table border="0" cellpadding="2" cellspacing="2" summary="" align="center">
+	<tr>
+		<td align="right">Titre de la réponse :</td>
+		<td align="left"><input type="text" name="titre" value="'.(isset($_POST['titre'])?$_POST['titre']:'').'" size="30"></td>
+	</tr>
+	<tr>
+		<td align="right">Votre nom ou pseudonyme :</td>
+		<td align="left"><input type="text" name="pseudo" value="'.(isset($_POST['pseudo'])?$_POST['pseudo']:'').'" size="30"></td>
+	</tr>
+	<tr>
+		<td align="right">Votre mail (facultatif) :</td>
+		<td align="left"><input type="text" name="mail" value="'.(isset($_POST['mail'])?$_POST['mail']:'').'" size="30"></td>
+	</tr>
+	<tr>
+		<td align="center" colspan=2><div class="g-recaptcha" data-sitekey="6Le4ixgUAAAAABtIrhixfEZtB0rhFeDQCo16i9LU"></div></td>
+	</tr>
+	</table>
+	<p>Votre texte :<br />
+	<table width="100%" border="0" cellpadding="0" cellspacing="5" summary="" align="center">
+		<tr>
+			<td><textarea style="width:100%; height:100px" name="message">'.(isset($_POST['message'])?$_POST['message']:'').'</textarea></td>
+		</tr>
+	</table>
+	</p>
+	<p style="text-align:center">
+	<input type="submit" value="envoyer" />
+	</p>
+	</table>
+</div>
+';
+
+	$form .= '</form>';
+	return $form;
+}
+	
+?>
+<div class="page" id="page-forum">
+<?php
+if (isset($_GET["idsujet"])){
+	$idSujet = $_GET["idsujet"];
+	$erreur = 0;
+	$errMsg = "";
+	
+	if($isAdmin) {
+		//Suppression d'une réponse
+		if(isset($_GET['idreponse']) && isset($_GET['delete'])) {
+			if($_GET['delete'] == 1) {
+				$bddForum->supprimerReponse($_GET['idreponse']);
+				echo '<p class="valide">La réponse '.$_GET['idreponse'].' a bien été supprimée !</p>';
+				clearCache();
+			}
+		}
+	}
+	
+	if (isset($_POST['message'])){
+		if ($_POST['message']==""){
+			$errMsg =  '<p class="erreur">Vous ne pouvez pas poster un message vide !</p>';
+			$erreur=1;
+		} else if (!$utils->verifCapcha($_POST["g-recaptcha-response"])){
+			$errMsg = '<p class="erreur">Merci de confirmer que vous n\'êtes pas un robot !</p>';
+			$erreur=1;
+		} else {
+			// on enregistre la reponse
+			$jour = date("d");
+        	$mois = date("m");
+        	$annee = date("Y");
+			$titre = $utils->filtrerHTML($_POST['titre']); 
+        	$message =$utils->filtrerHTML($_POST['message']);
+        	$nom = $utils->filtrerHTML($_POST['pseudo']);
+			$mail =$utils->filtrerHTML($_POST['mail']);
+			$message = $utils->filtrerTEXTE($message);
+			$dat = $annee.'-'.$mois.'-'.$jour;
+			if(strpos($message, 'viagra') === false && strpos($message, 'cialis') === false && strpos($message, 'bactrim') === false  &&
+				strpos($titre, 'viagra') === false && strpos($titre, 'cialis') === false && strpos($titre, 'bactrim') === false) {
+				// insertion dans la bd
+				$bddForum->ajouterMessage(0,$idSujet,0,$titre,$nom,$mail,$message);
+				clearCache();
+			}
+			$errMsg =  "<p class=\"valide\">Votre Message &agrave; bien &eacute;t&eacute; pris en compte. Merci</p>";
+		}
+	}
+	$tableau = $bddForum->listerMessages($idSujet);
+	$idTheme = "";
+	$titre = "";
+	foreach($tableau as $row){
+		if($row['no_suj']==$idSujet){
+			$idTheme = $row['no_forum'];
+			$titre = utf8_encode($row['titre']);
+			break;
+		}
+	}
+	$nomForum = utf8_encode($bddForum->nomTheme($idTheme));
+	if ($erreur ==1 || isset($_GET['nouvreponse']))
+	{
+		echo '<div class="fil-ariane">Vous êtes dans : <a href="'.$urlBase.'forum.html">Forum</a> &gt; <a href="'.$urlBase.'forum/theme-'.$idTheme.'.html">'.$nomForum.'</a> &gt; <a href="'.$urlBase.'forum/sujet-'.$idSujet.'.html">'.$titre.'</a> &gt; <a href="'.$urlBase.'forum/sujet-'.$idSujet.'-new.html">Nouveau message</a></div>';
+		echo $errMsg;
+		echo formulaire(2,$utils->genRandomString(25));
+	} else {
+		echo '<div class="fil-ariane">Vous êtes dans : <a href="'.$urlBase.'forum.html">Forum</a> &gt; <a href="'.$urlBase.'forum/theme-'.$idTheme.'.html">'.$nomForum.'</a> &gt; <a href="'.$urlBase.'forum/sujet-'.$idSujet.'.html">'.$titre.'</a></div>';
+		echo $errMsg;
+	}
+	
+	foreach($tableau as $row)
+	{
+		if ($row['pseudo']=="") $row['pseudo'] = "inconnu";
+		echo "<div class=\"message\">";
+		echo "<h1 class=\"message-titre\">".utf8_encode($row['titre'])."</h1>";
+		echo "<div class=\"message-contenu\">";
+			echo "<p class=\"message-auteur\">Post&eacute; par ".utf8_encode($row['pseudo'])." ".$utils->afficherDate($row['date_message'])."</p>";
+			echo "<p class=\"message-auteur\"><img src=\"".$urlBase."forum/mail-".$row['id'].".jpg\" /></p>";
+			echo "<p class=\"message-texte\">".utf8_encode($utils->filtrerTEXTE($row['message']))."</p>";
+		echo "</div>";
+		if (!isset($_GET['nouvreponse']) && $erreur !=1) {
+			echo "<div class=\"message-reponse\">";
+			echo "<a class=\"bouton\" href=\"".$urlBase."forum/sujet-$idSujet-new.html\">R&eacute;pondre</a>";
+			if($isAdmin) {
+				echo " Supprimer ce post : <a class=\"bouton\" href=\"".$urlBase."forum/sujet-$idSujet-reponse-".$row['id']."-del.html\">ici</a>";
+			}
+			echo "</div>";
+		}
+		echo "</div>";
+		echo '</FORM>';
+	}
+} else if (isset($_GET["idtheme"])){
+	$idTheme = addslashes($_GET["idtheme"]);
+	$nomTheme = utf8_encode($bddForum->nomTheme($idTheme));
+	$erreur = 0;
+	$errMsg = "";
+	if (isset($_POST['message'])){
+		if ($_POST['message']==""){
+			$errMsg = '<p class="erreur">Vous ne pouvez pas poster un message vide !</p>';
+			$erreur=1;
+		} else if ($_POST['titre']==""){
+			$errMsg = '<p class="erreur">Vous ne pouvez pas poster sans titre !</p>';
+			$erreur=1;
+		} else if (!$utils->verifCapcha($_POST["g-recaptcha-response"])){
+			$errMsg = '<p class="erreur">Merci de confirmer que vous n\'êtes pas un robot !</p>';
+			$erreur=1;
+		} else {
+			// on enregistre la reponse
+			$titre =$utils->filtrerHTML($_POST['titre']); 
+        	$message =$utils->filtrerHTML($_POST['message']);
+        	$nom = $utils->filtrerHTML($_POST['pseudo']);
+			$mail =	$utils->filtrerHTML($_POST['mail']);
+			$message = $utils->filtrerTEXTE($message);
+			// insertion dans la bd
+			$no_sujet = $bddForum->noMaxSujet()+1;
+			if(strpos($message, 'viagra') === false && strpos($message, 'cialis') === false && strpos($message, 'bactrim') === false &&
+				strpos($titre, 'viagra') === false && strpos($titre, 'cialis') === false && strpos($titre, 'bactrim') === false) {
+				$bddForum->ajouterMessage($no_sujet,0,$idTheme,$titre,$nom,$mail,$message); 
+				clearCache();
+			}
+			$errMsg = "<p class=\"valide\">Votre Message &agrave; bien &eacute;t&eacute; pris en compte. Merci</p>";
+		}
+	}
+	if ($erreur ==1 || isset($_GET['nouvsujet'])){
+		echo '<div class="fil-ariane">Vous êtes dans : <a href="'.$urlBase.'forum.html">Forum</a> &gt; <a href="'.$urlBase.'forum/theme-'.$idTheme.'.html">'.$nomTheme.'</a> &gt; <a href="'.$urlBase.'forum/theme-'.$idTheme.'-new.html">nouveau sujet</a></div>';
+		echo $errMsg;
+		echo formulaire(1,$utils->genRandomString(25));
+	} else {
+		echo '<div class="fil-ariane">Vous êtes dans : <a href="'.$urlBase.'forum.html">Forum</a> &gt; <a href="'.$urlBase.'forum/theme-'.$idTheme.'.html">'.$nomTheme.'</a></div>';
+		echo $errMsg;
+		echo '<h1 class="bord-rouge">Thème : '.$nomTheme.'</h1>';
+		
+		echo "<p>Pour poser une nouvelle question cliquer sur le lien : <a class=\"bouton\" href=\"".$urlBase."forum/theme-$idTheme-new.html\">Nouvelle question</a></p>";
+		echo "<p>Pour poser une question dans un des thèmes déjà abordés ci-dessous, ou pour r&eacute;pondre aux questions, <br>cliquer sur le titre de la question (en bleu) : </p>";
+
+		echo '<table cellspacing="0" cellpadding="5" class="tableau">';		
+		
+		// Affichage des Sujets :
+		$tableau = $bddForum->listerSujets($idTheme);
+		echo "<tr class=\"titre\">";
+		echo "<th>Titre".
+			"</th><th>Auteur".
+			"</th><th>R&eacute;ponses".
+			"</th><th>Dernier message</th>";
+		echo "</tr>";
+		$nbSuj=10; // nombre de sujet affiché
+		if(isset($_GET['nbsuj']))
+			$nbSuj = $_GET['nbsuj'];
+		$cntSuj = 0;
+		if (count($tableau)!=0)
+		foreach($tableau as $row)
+		{
+			$cntSuj++;
+			if ($row['nomAuteur']=="") $row['nomAuteur'] = "inconnu";
+			echo "<tr>";
+			echo "<td class=\"nomTheme\"><a href=\"".$urlBase."forum/sujet-".$row['idSujet'].".html\">".utf8_encode($row['nomSujet']).
+				"</a></td><td class=\"nomAuteur\">".utf8_encode($row['nomAuteur']).
+				"</td><td class=\"nbSuj\">".$row['nbResp'].
+				"</td><td class=\"dateLastResp\">".$utils->afficherDate($row['dateLastResp'])."</td>";
+			echo "</tr>";
+			if($nbSuj!="all" && $cntSuj>=$nbSuj) break;
+		}
+		echo '</table>';
+		if($nbSuj!="all")echo '<p class="centre"><a href="'.$urlBase.'forum/theme-'.$idTheme.'-all.html">afficher les anciens sujets</a></p>';
+	}
+} else {
+	echo '<div class="fil-ariane">Vous êtes dans : <a href="'.$urlBase.'forum.html">Forum</a></div>';
+	echo '<h1 class="bord-rouge">Forum de discussion.</h1>';
+	echo "<p>Le forum est un espace d'échange pour les internautes. <br>Pour visualiser les conversations, cliquer sur un thème parmis la liste ci-dessous.</p>";
+
+	echo '<table cellspacing="0" cellpadding="5" class="tableau">';
+	echo '<tr>';
+	echo '<th>Nom & Description</th>';
+	echo '<th>Sujets</th>';
+	echo '<th>Dernier message</th>';
+	echo '</tr>';
+	
+	$cache = getCache();
+	if($cache == ""){
+		// Affichage des catégorie :
+		$tableau = $bddForum->listerThemes();
+		$cache = "";
+		foreach($tableau as $row)
+		{
+			$cache .= "<tr>";
+			$cache .= "<td class=\"nomTheme\"><a href=\"".$urlBase."forum/theme-".$row["idTheme"].".html\">".utf8_encode($row["nomTheme"]).
+				"</a><br><span class=\"descTheme\">".utf8_encode($row["descTheme"])."</span>".
+				"</td><td class=\"nbSuj\">".$row["nbSujets"].
+				"</td><td class=\"dateLastResp\">".$utils->afficherDate($row["dateLastResp"])."</td>";
+			$cache .= "</tr>";
+		}
+		setCache($cache);
+	}
+	echo $cache;
+	
+	echo '</table>';
+}
+echo '</div>';
+$bddForum->disconnect();
+?>
+</div>

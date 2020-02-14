@@ -1,0 +1,42 @@
+header nav ol li a{
+	filter:progid:DXImageTransform.Microsoft.Shadow(color='#999999', Direction=135, Strength=4);
+	zoom: 1;
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffc451', endColorstr='#ffbc2e',GradientType=0 );
+}
+
+
+header nav ol li a.selected{
+	text-decoration: underline;
+}
+
+
+
+header{
+	width: 995px;
+}
+
+header nav{
+	width: 995px;
+}
+
+footer {
+	width: 995px;
+}
+
+#content{
+	width: 995px;
+}
+
+#image-screen #image-content{
+	position: absolute;
+	padding: 0;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	max-height: 100%;
+	width: 100%;
+	border: 0px solid #A64834;
+	background: white;
+	text-align: center;
+}
