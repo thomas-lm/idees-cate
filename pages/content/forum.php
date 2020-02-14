@@ -44,7 +44,7 @@ function formulaire($type,$cle) {
 		<td align="left"><input type="text" name="mail" value="'.(isset($_POST['mail'])?$_POST['mail']:'').'" size="30"></td>
 	</tr>
 	<tr>
-		<td align="center" colspan=2><div class="g-recaptcha" data-sitekey="##############"></div></td>
+		<td align="center" colspan=2><div class="g-recaptcha" data-sitekey="1a4b665d5abead7f53a906817c3547b5cb823ba4"></div></td>
 	</tr>
 	</table>
 	<p>Votre texte :<br />
