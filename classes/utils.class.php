@@ -65,7 +65,7 @@ class Utils {
 	
 	public function verifCapcha($gcapcha) {
 		$url = "https://www.google.com/recaptcha/api/siteverify".
-		"?secret=6Le4ixgUAAAAAKxodRuUlKu61jRc6zcI7o4-4baL&response=".
+		"?secret=#########&response=".
 		$gcapcha."&remoteip=".$_SERVER['REMOTE_ADDR'];
  
 		$curl = curl_init();
